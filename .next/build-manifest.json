@@ -27,10 +27,30 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/admin-panel": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/admin-panel.js"
+    ],
+    "/admin-panel/charity": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/admin-panel/charity.js"
+    ],
+    "/admin-panel/wishlist/[charityId]": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/admin-panel/wishlist/[charityId].js"
+    ],
     "/charity-details/[charityId]": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/charity-details/[charityId].js"
+    ],
+    "/charity-listings": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/charity-listings.js"
     ]
   },
   "ampFirstPages": []

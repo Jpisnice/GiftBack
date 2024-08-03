@@ -4,12 +4,15 @@ import Head from "next/head";
 import { AdminLayout } from "../layout";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 function Wishlist() {
   const router = useRouter();
   const params = useParams();
   const id = params?.charityId;
   const [Item, setItem] = useState([]);
+  const { toast } = useToast();
 
   const getItems = async (id) => {
     try {
@@ -19,7 +22,11 @@ function Wishlist() {
 
       setItem(res.data.products);
     } catch (error) {
-      alert("Server Downtime, Please Try Again Later!");
+      toast({
+        title: "Error",
+        description: "Server Downtime, Please Try Again Later!",
+        variant: "destructive"
+      });
     }
   };
 
@@ -42,8 +49,17 @@ function Wishlist() {
       });
 
       getItems(id);
+      toast({
+        title: "Success",
+        description: "Activity changed successfully!",
+        variant: "default"
+      });
     } catch (error) {
-      alert("Failed to change Activity!");
+      toast({
+        title: "Error",
+        description: "Failed to change Activity!",
+        variant: "destructive"
+      });
     }
   };
 
@@ -54,8 +70,17 @@ function Wishlist() {
       });
 
       getItems(id);
+      toast({
+        title: "Success",
+        description: "Item deleted successfully!",
+        variant: "default"
+      });
     } catch (error) {
-      alert("Failed to Delete Item!");
+      toast({
+        title: "Error",
+        description: "Failed to delete Item!",
+        variant: "destructive"
+      });
     }
   };
 
@@ -68,7 +93,6 @@ function Wishlist() {
       <div className="p-3">
         <div className="flex justify-between py-3 border-b-2 border-black">
           <div>
-            {/* <h1 className='text-2xl font-semibold'>Health for All:</h1> */}
             <p>Items currently wishlisted</p>
           </div>
 
@@ -172,6 +196,7 @@ function Wishlist() {
           </table>
         </div>
       </div>
+      <Toaster />
     </AdminLayout>
   );
 }

@@ -2,7 +2,16 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/charity-listings": "pages/charity-listings.js",
+  "/admin-panel/charity": "pages/admin-panel/charity.js",
+  "/api/deleteItem": "pages/api/deleteItem.js",
+  "/api/getItems": "pages/api/getItems.js",
+  "/admin-panel/wishlist/[charityId]": "pages/admin-panel/wishlist/[charityId].js",
+  "/api/getCharity": "pages/api/getCharity.js",
+  "/admin-panel": "pages/admin-panel.js",
+  "/api/highlightCharity": "pages/api/highlightCharity.js",
+  "/": "pages/index.js",
+  "/api/getHighlights": "pages/api/getHighlights.js",
   "/charity-details/[charityId]": "pages/charity-details/[charityId].js",
-  "/": "pages/index.js"
+  "/charity-listings": "pages/charity-listings.js",
+  "/api/getOneCharity": "pages/api/getOneCharity.js"
 }
