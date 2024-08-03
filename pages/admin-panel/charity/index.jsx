@@ -63,7 +63,7 @@ function Dashboard() {
       await axios.post("/api/highlightCharity", {
         charityId: id,
       });
-      showToast("success", "Charity highlighted successfully!");
+      showToast("success", "Highlight Status Changed!");
       getCharity();
     } catch (error) {
       showToast("error", "Failed to change Highlight!");

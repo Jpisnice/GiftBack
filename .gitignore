@@ -10,7 +10,9 @@
 /coverage
 
 # # next.js
-/.next/
+/.next/static/
+/.next/cache/
+/.next/*
 /out/
 .next
 
