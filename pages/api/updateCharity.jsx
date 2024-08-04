@@ -1,4 +1,4 @@
-import Charity from '@/models/Charitys';
+import Charity from '@/models/Charity';
 import connectDb from '@/middleware/dbConnect';
 import formidable from 'formidable';
 import fs from 'fs';
@@ -12,7 +12,7 @@ export const config = {
 };
 
 const handler = async (req, res) => {
-    if (req.method == 'POST') {
+    if (req.method === 'POST') {
         const uploadDir = path.join(process.cwd(), '/public/charity');
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir);
@@ -42,33 +42,32 @@ const handler = async (req, res) => {
             const { fields, files } = await parseForm();
 
             // Get the new filename
-            const filename = files?.image?.[0].newFilename;
+            const filename = files?.image?.newFilename;
 
-            let validCharity = await Charity.findById(fields.id[0]);
+            let validCharity = await Charity.findByPk(fields.id[0]);
 
             if (validCharity) {
-                if (filename != undefined) {
-                    validCharity['imgName'] = filename;
+                if (filename !== undefined) {
+                    validCharity.img_name = filename;
                 }
 
-                validCharity['name'] = fields.institudeName[0];
-                validCharity['address'] = fields.address[0];
-                validCharity['about'] = fields.about[0];
-                validCharity['email'] = fields.email[0];
-                validCharity['contact1'] = fields.contact1[0];
-                validCharity['contact2'] = fields.contact2[0];
+                validCharity.name = fields.institudeName[0];
+                validCharity.address = fields.address[0];
+                validCharity.about = fields.about[0];
+                validCharity.email = fields.email[0];
+                validCharity.contact1 = fields.contact1[0];
+                validCharity.contact2 = fields.contact2[0];
                 await validCharity.save();
 
                 res.status(200).json({ message: "Data Updated Successfully!" });
-            }
-            else {
+            } else {
                 res.status(404).json({ message: "Charity Not Found!" });
             }
         } catch (error) {
+            console.error("Error updating charity:", error);
             res.status(500).json({ message: "Internal Server Error!" });
         }
-    }
-    else {
+    } else {
         res.status(400).json({ message: "Invalid Request Method!" });
     }
 }

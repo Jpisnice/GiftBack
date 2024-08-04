@@ -1,12 +1,19 @@
-import Product from "@/models/Products";
-import connectDb from "@/middleware/dbConnect";
+import Product from '@/models/Products';
+import connectDb from '@/middleware/dbConnect';
 
 const handler = async (req, res) => {
   try {
-    let validItem = await Product.findOne({
-      isDeleted: 0,
-      _id: req.body.productId,
-    }).select("-createdAt -updatedAt -isActive -isDeleted");
+    const { productId } = req.body;
+
+    if (!productId) {
+      return res.status(400).json({ error: "productId is required" });
+    }
+
+    // Find the product by ID and ensure it's not deleted
+    const validItem = await Product.findOne({
+      where: { id: productId, is_deleted: 0 },
+      attributes: { exclude: ['created_at', 'updated_at', 'is_active', 'is_deleted'] }
+    });
 
     if (validItem) {
       res.status(200).json({ validItem });

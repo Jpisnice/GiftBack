@@ -27,25 +27,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/admin-panel": [
+    "/about-us": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/admin-panel.js"
-    ],
-    "/admin-panel/charity": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/admin-panel/charity.js"
-    ],
-    "/admin-panel/wishlist/[charityId]": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/admin-panel/wishlist/[charityId].js"
-    ],
-    "/admin-panel/wishlist/createAPI/[charityId]": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/admin-panel/wishlist/createAPI/[charityId].js"
+      "static/chunks/pages/about-us.js"
     ],
     "/charity-details/[charityId]": [
       "static/chunks/webpack.js",
@@ -56,6 +41,16 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/charity-listings.js"
+    ],
+    "/faq": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/faq.js"
+    ],
+    "/product-details/[productId]": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/product-details/[productId].js"
     ]
   },
   "ampFirstPages": []

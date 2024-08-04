@@ -1,4 +1,4 @@
-import Product from '@/models/Products';
+import Product from '@/models/Products'; // Import the Sequelize model
 import connectDb from '@/middleware/dbConnect';
 import formidable from 'formidable';
 import fs from 'fs';
@@ -12,7 +12,7 @@ export const config = {
 };
 
 const handler = async (req, res) => {
-    if (req.method == 'POST') {
+    if (req.method === 'POST') {
         const uploadDir = path.join(process.cwd(), '/public/product');
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir);
@@ -42,23 +42,26 @@ const handler = async (req, res) => {
             const { fields, files } = await parseForm();
 
             // Get the new filename
-            const filename = files?.image[0].newFilename;
+            const filename = files?.image[0]?.newFilename;
 
-            let newProduct = new Product;
-            newProduct['name'] = fields.itemName[0];
-            newProduct['price'] = fields.price[0];
-            newProduct['link'] = fields.link[0];
-            newProduct['charityId'] = fields.charityId[0];
-            newProduct['description'] = fields.description[0];
-            newProduct['imgName'] = filename;
-            await newProduct.save();
+            // Create a new product entry
+            await Product.create({
+                name: fields.itemName[0],
+                price: parseFloat(fields.price[0]), // Ensure price is a number
+                link: fields.link[0],
+                charity_id: fields.charityId[0], // Ensure field name matches model
+                description: fields.description[0],
+                img_name: filename, // Ensure field name matches model
+                is_active: 1, // Set default values if needed
+                is_deleted: 0
+            });
 
             res.status(200).json({ message: "Data Saved Successfully!" });
         } catch (error) {
+            console.error(error); // Log error for debugging
             res.status(500).json({ message: "Internal Server Error!" });
         }
-    }
-    else {
+    } else {
         res.status(400).json({ message: "Invalid Request Method!" });
     }
 }

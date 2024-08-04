@@ -1,21 +1,15 @@
-import mongoose from "mongoose";
-import dotenv from 'dotenv';
-
-dotenv.config({ path: '.env.production' });
+// middleware/connectDb.js
+import sequelize from '../lib/db.js';
 
 const connectDb = handler => async (req, res) => {
-    try {
-        if (mongoose.connections[0].readyState) {
-            return handler(req, res);
-        }
-
-        await mongoose.connect(process.env.MONGO_URI);
-
-        return handler(req, res);
-    } catch (error) {
-        console.error("Error connecting to database:", error);
-        return res.status(500).json({ message: "Database connection error" });
-    }
+  try {
+    await sequelize.authenticate();
+    console.log('Connection to MySQL has been established successfully.');
+    return handler(req, res);
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+    return res.status(500).json({ message: 'Database connection error' });
+  }
 }
 
 export default connectDb;

@@ -8,13 +8,13 @@ import { useToast } from "@/components/ui/use-toast";
 
 function Dashboard() {
   const router = useRouter();
-  const [Charity, setCharity] = useState([]);
+  const [charities, setCharities] = useState([]); // Renamed state variable to match expected data
   const { toast } = useToast();
 
-  const getCharity = async () => {
+  const getCharities = async () => {
     try {
       const res = await axios.post(`/api/getCharity`);
-      setCharity(res.data.charitys);
+      setCharities(res.data.charities); // Ensure you are accessing `charities`
     } catch (error) {
       showToast("error", "Server Downtime, Please Try Again Later!");
     }
@@ -28,7 +28,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    getCharity();
+    getCharities(); // Ensure this function name is correct
     if (!localStorage.getItem("token")) {
       router.push("/");
     }
@@ -40,7 +40,7 @@ function Dashboard() {
         charityId: id,
       });
       showToast("success", "Activity changed successfully!");
-      getCharity();
+      getCharities(); // Refresh data
     } catch (error) {
       showToast("error", "Failed to change Activity!");
     }
@@ -52,7 +52,7 @@ function Dashboard() {
         charityId: id,
       });
       showToast("success", "Charity deleted successfully!");
-      getCharity();
+      getCharities(); // Refresh data
     } catch (error) {
       showToast("error", "Failed to delete Charity!");
     }
@@ -64,7 +64,7 @@ function Dashboard() {
         charityId: id,
       });
       showToast("success", "Highlight Status Changed!");
-      getCharity();
+      getCharities(); // Refresh data
     } catch (error) {
       showToast("error", "Failed to change Highlight!");
     }
@@ -96,91 +96,97 @@ function Dashboard() {
         <div className="mt-3">
           <table className="w-full">
             <tbody>
-              {Charity.map((item, index) => (
-                <tr className="border-b-2 border-gray-500" key={index}>
-                  <td className="py-5">
-                    <div className="w-16 h-16 rounded-md bg-black">
-                      <img
-                        className="w-full h-full rounded-md"
-                        src={`/charity/${item.imgName}`}
-                        alt="pic"
-                      />
-                    </div>
-                  </td>
-                  <td className="py-5">
-                    <div>
-                      <h2 className="text-2xl font-semibold capitalize">
-                        {item.name}
-                      </h2>
-                      <p>
-                        <b>Charity Id:</b> {item._id}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="py-5">
-                    <div className="text-center">
-                      <input
-                        type="checkbox"
-                        name="highLight"
-                        id="highLight"
-                        onChange={() => {
-                          handleHighlight(item._id);
-                        }}
-                        checked={item.highlighted === 1}
-                      />
-                      <p className="mt-1">Highlight Charity</p>
-                    </div>
-                  </td>
-                  <td className="py-5">
-                    <div className="flex justify-center space-x-3 items-center">
+              {charities.length > 0 ? (
+                charities.map((item, index) => (
+                  <tr className="border-b-2 border-gray-500" key={index}>
+                    <td className="py-5">
+                      <div className="w-16 h-16 rounded-md bg-black">
+                        <img
+                          className="w-full h-full rounded-md"
+                          src={`/charity/${item.img_name}`}
+                          alt="pic"
+                        />
+                      </div>
+                    </td>
+                    <td className="py-5">
                       <div>
-                        <Link href={`/admin-panel/wishlist/${item._id}`}>
+                        <h2 className="text-2xl font-semibold capitalize">
+                          {item.name}
+                        </h2>
+                        <p>
+                          <b>Charity Id:</b> {item.id} {/* Assuming the ID field is named `id` */}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="py-5">
+                      <div className="text-center">
+                        <input
+                          type="checkbox"
+                          name="highLight"
+                          id="highLight"
+                          onChange={() => {
+                            handleHighlight(item.id);
+                          }}
+                          checked={item.highlighted === 1}
+                        />
+                        <p className="mt-1">Highlight Charity</p>
+                      </div>
+                    </td>
+                    <td className="py-5">
+                      <div className="flex justify-center space-x-3 items-center">
+                        <div>
+                          <Link href={`/admin-panel/wishlist/${item.id}`}>
+                            <button
+                              type="button"
+                              className="bg-yellow-400 hover:bg-yellow-500 py-1 px-2 rounded-md text-black"
+                            >
+                              Item Wishlist
+                            </button>
+                          </Link>
+                        </div>
+                        <div>
+                          <Link href={`/admin-panel/charity/edit/${item.id}`}>
+                            <button type="button">
+                              <img src="/icons/editIcon.png" alt="icon" />
+                            </button>
+                          </Link>
+                        </div>
+                        <div>
                           <button
                             type="button"
-                            className="bg-yellow-400 hover:bg-yellow-500 py-1 px-2 rounded-md text-black"
+                            onClick={() => {
+                              handleDelete(item.id);
+                            }}
                           >
-                            Item Wishlist
+                            <img src="/icons/deleteIcon.png" alt="icon" />
                           </button>
-                        </Link>
+                        </div>
                       </div>
-                      <div>
-                        <Link href={`/admin-panel/charity/edit/${item._id}`}>
-                          <button type="button">
-                            <img src="/icons/editIcon.png" alt="icon" />
-                          </button>
-                        </Link>
-                      </div>
+                    </td>
+                    <td className="py-5">
                       <div>
                         <button
-                          type="button"
                           onClick={() => {
-                            handleDelete(item._id);
+                            handleActivity(item.id);
                           }}
+                          type="button"
+                          className={`bg-${
+                            item.isActive ? "green" : "red"
+                          }-400 hover:bg-${
+                            item.isActive ? "green" : "red"
+                          }-500 py-1 px-2 rounded-md text-black`}
                         >
-                          <img src="/icons/deleteIcon.png" alt="icon" />
+                          {item.isActive ? "Active" : "In-Active"}
                         </button>
                       </div>
-                    </div>
-                  </td>
-                  <td className="py-5">
-                    <div>
-                      <button
-                        onClick={() => {
-                          handleActivity(item._id);
-                        }}
-                        type="button"
-                        className={`bg-${
-                          item.isActive ? "green" : "red"
-                        }-400 hover:bg-${
-                          item.isActive ? "green" : "red"
-                        }-500 py-1 px-2 rounded-md text-black`}
-                      >
-                        {item.isActive ? "Active" : "In-Active"}
-                      </button>
-                    </div>
-                  </td>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center">No charities found.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

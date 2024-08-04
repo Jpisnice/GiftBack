@@ -44,7 +44,7 @@ function Wishlist() {
 
   const handleActivity = async (ItemId) => {
     try {
-      const res = await axios.post("/api/changeItemActivity", {
+      await axios.post("/api/changeItemActivity", {
         itemId: ItemId,
       });
 
@@ -65,7 +65,7 @@ function Wishlist() {
 
   const handleDelete = async (ItemId) => {
     try {
-      const res = await axios.post("/api/deleteItem", {
+      await axios.post("/api/deleteItem", {
         itemId: ItemId,
       });
 
@@ -82,6 +82,15 @@ function Wishlist() {
         variant: "destructive"
       });
     }
+  };
+
+  const getImageSrc = (img) => {
+    // Check if the URL is absolute
+    if (/^(http|https):\/\//.test(img)) {
+      return img;
+    }
+    // Handle relative paths
+    return `/product/${img}`;
   };
 
   return (
@@ -123,20 +132,12 @@ function Wishlist() {
               {Item.map((item, index) => (
                 <tr className="border-b-2 border-gray-500" key={index}>
                   <td className="py-5">
-                    <div className="size-[50px] rounded-md bg-black">
-                      {item.importFlag == 1 ? (
-                        <img
-                          className="w-full h-full rounded-md"
-                          src={`${item.imgName}`}
-                          alt="pic"
-                        />
-                      ) : (
-                        <img
-                          className="w-full h-full rounded-md"
-                          src={`/product/${item.imgName}`}
-                          alt="pic"
-                        />
-                      )}
+                    <div className="w-16 h-16 rounded-md bg-black">
+                      <img
+                        className="w-full h-full rounded-md"
+                        src={getImageSrc(item.img_name || item.imgName)}
+                        alt="Product Image"
+                      />
                     </div>
                   </td>
                   <td className="py-5">
@@ -156,7 +157,7 @@ function Wishlist() {
                       <div>
                         <Link href={`/admin-panel/wishlist/edit/${item._id}`}>
                           <button type="button">
-                            <img src="/icons/editIcon.png" alt="icon" />
+                            <img src="/icons/editIcon.png" alt="Edit Icon" />
                           </button>
                         </Link>
                       </div>
@@ -164,11 +165,9 @@ function Wishlist() {
                       <div>
                         <button
                           type="button"
-                          onClick={() => {
-                            handleDelete(item._id);
-                          }}
+                          onClick={() => handleDelete(item._id)}
                         >
-                          <img src="/icons/deleteIcon.png" alt="icon" />
+                          <img src="/icons/deleteIcon.png" alt="Delete Icon" />
                         </button>
                       </div>
                     </div>
@@ -176,9 +175,7 @@ function Wishlist() {
                   <td className="py-5">
                     <div>
                       <button
-                        onClick={() => {
-                          handleActivity(item._id);
-                        }}
+                        onClick={() => handleActivity(item._id)}
                         type="button"
                         className={`bg-${
                           item.isActive ? "green-400" : "yellow-400"
@@ -186,7 +183,7 @@ function Wishlist() {
                           item.isActive ? "green-500" : "yellow-500"
                         } py-1 px-2 rounded-md text-black`}
                       >
-                        {item.isActive == 1 ? "Active" : "In-Active"}
+                        {item.isActive ? "Active" : "In-Active"}
                       </button>
                     </div>
                   </td>

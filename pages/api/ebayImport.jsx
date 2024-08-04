@@ -1,4 +1,4 @@
-import Product from '@/models/Products';
+import Product from '@/models/Products'; // Import the Sequelize model
 import connectDb from '@/middleware/dbConnect';
 
 const handler = async (req, res) => {
@@ -7,7 +7,13 @@ const handler = async (req, res) => {
             const { name, price, link, charityId, imgName } = req.body;
 
             // Check if the product already exists and is not deleted
-            const existingProduct = await Product.findOne({ name, charityId, isDeleted: 0 });
+            const existingProduct = await Product.findOne({
+                where: {
+                    name: name,
+                    charity_id: charityId, // Match the field name in the Sequelize model
+                    is_deleted: 0
+                }
+            });
 
             if (existingProduct) {
                 // If the product already exists and is not deleted, return an error response
@@ -15,17 +21,18 @@ const handler = async (req, res) => {
             }
 
             // If the product does not exist, create a new product
-            let newProduct = new Product();
-            newProduct['name'] = name;
-            newProduct['price'] = price;
-            newProduct['link'] = link;
-            newProduct['charityId'] = charityId;
-            newProduct['imgName'] = imgName;
-            newProduct['importFlag'] = 1;
-            await newProduct.save();
+            await Product.create({
+                name: name,
+                price: parseFloat(price), // Ensure price is a number
+                link: link,
+                charity_id: charityId, // Match the field name in the Sequelize model
+                img_name: imgName, // Match the field name in the Sequelize model
+                import_flag: 1 // Match the field name in the Sequelize model
+            });
 
             res.status(200).json({ message: "Data Saved Successfully!" });
         } catch (error) {
+            console.error(error); // Log error for debugging
             res.status(500).json({ message: "Internal Server Error!" });
         }
     } else {

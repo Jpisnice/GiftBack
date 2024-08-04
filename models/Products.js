@@ -1,18 +1,53 @@
-const mongoose = require('mongoose');
+// models/Product.js
+import { DataTypes } from 'sequelize';
+import sequelize from '../lib/db';
 
-const ProductSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    imgName: { type: String },
-    description: { type: String },
-    link: { type: String, required: true },
-    price: { type: Number, required: true },
-    charityId: { type: String, required: true },
-    importFlag: { type: Number, required: true, default: 0 },
-    isActive: { type: Number, required: true, default: 1 },
-    isDeleted: { type: Number, required: true, default: 0 }
+const Product = sequelize.define('Product', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  img_name: {
+    type: DataTypes.STRING
+  },
+  description: {
+    type: DataTypes.TEXT
+  },
+  link: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  price: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false
+  },
+  charity_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'charities', // name of the target table
+      key: 'id'
+    }
+  },
+  is_active: {
+    type: DataTypes.TINYINT,
+    defaultValue: 1
+  },
+  is_deleted: {
+    type: DataTypes.TINYINT,
+    defaultValue: 0
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+    onUpdate: DataTypes.NOW
+  }
 }, {
-    timestamps: true
+  tableName: 'products',
+  timestamps: false
 });
 
-mongoose.models = {};
-export default mongoose.model("Product", ProductSchema);
+export default Product;

@@ -6,6 +6,15 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useQuery } from "react-query";
 
+const getImageSrc = (img) => {
+  // Check if the URL is absolute
+  if (/^(http|https):\/\//.test(img)) {
+    return img;
+  }
+  // Handle relative paths
+  return `/product/${img}`;
+};
+
 const ProductDetails = () => {
   const router = useRouter();
   const { productId } = router.query;
@@ -19,7 +28,7 @@ const ProductDetails = () => {
     ["product-details", productId],
     () => fetchProductDetails(productId),
     {
-      enabled: !!productId, // Ensures the query runs only if charityId is available
+      enabled: !!productId, // Ensures the query runs only if productId is available
     }
   );
 
@@ -38,38 +47,22 @@ const ProductDetails = () => {
           <section className="p-7 h-full min-h-screen py-10 px-3">
             <div className="mb-5">
               <div className="size-[250px] lg:hidden md:hidden block mx-auto rounded-md bg-black">
-                {data?.validItem.importFlag == 1 ? (
-                  <img
-                    className="w-full h-full rounded-md"
-                    src={`${data?.validItem.imgName}`}
-                    alt="img"
-                  />
-                ) : (
-                  <img
-                    className="w-full h-full rounded-md"
-                    src={`/product/${data?.validItem.imgName}`}
-                    alt="img"
-                  />
-                )}
+                <img
+                  className="w-full h-full rounded-md"
+                  src={getImageSrc(data?.validItem.img_name)}
+                  alt="img"
+                />
               </div>
             </div>
 
             <div className="flex justify-start space-x-3">
               <div>
                 <div className="lg:size-[500px] md:size-[300px] lg:block md:block hidden mx-auto rounded-md bg-black">
-                  {data?.validItem.importFlag == 1 ? (
-                    <img
-                      className="w-full h-full rounded-md"
-                      src={`${data?.validItem.imgName}`}
-                      alt="img"
-                    />
-                  ) : (
-                    <img
-                      className="w-full h-full rounded-md"
-                      src={`/product/${data?.validItem.imgName}`}
-                      alt="img"
-                    />
-                  )}
+                  <img
+                    className="w-full h-full rounded-md"
+                    src={getImageSrc(data?.validItem.img_name)}
+                    alt="img"
+                  />
                 </div>
               </div>
 
@@ -88,14 +81,18 @@ const ProductDetails = () => {
                   </div>
 
                   <div>
-                    <Link target="blank" href={`${data?.validItem.link}`}>
+                    <a
+                      href={`${data?.validItem.link}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <button
                         type="button"
                         className="text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 rounded-md py-1 px-4"
                       >
                         Proceed To Gift
                       </button>
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>

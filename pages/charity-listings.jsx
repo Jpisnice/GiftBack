@@ -9,17 +9,24 @@ export default function CharityListings() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCharities, setFilteredCharities] = useState([]);
 
+  // Fetch charity list from API
   const fetchCharityList = async () => {
-    const res = await axios.get("/api/getCharity");
-    return res.data;
+    try {
+      const res = await axios.get("/api/getCharity");
+      console.log("Charity data received:", res.data); // Log the response data
+      return res.data.charities; // Return charities directly
+    } catch (error) {
+      console.error("Error fetching charity list:", error);
+      throw new Error("Failed to fetch charity list");
+    }
   };
 
   const { data, isLoading } = useQuery("charity-list", fetchCharityList);
 
   useEffect(() => {
-    if (data?.charitys) {
+    if (data) {
       setFilteredCharities(
-        data.charitys.filter((charity) =>
+        data.filter((charity) =>
           charity.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
@@ -52,39 +59,45 @@ export default function CharityListings() {
             </div>
           ) : (
             <div className="grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 gap-2">
-              {filteredCharities.map((item, index) => (
-                <div
-                  className="px-3 py-7 rounded-md shadow-2xl flex justify-start space-x-3"
-                  key={index}
-                >
-                  <div className="flex items-center">
-                    <div className="size-[80px] shadow-2xl p-5 rounded-full flex items-center justify-center">
-                      <img
-                        className="w-full h-full rounded-md"
-                        src={`/charity/${item.imgName}`}
-                        alt="icon"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="mb-2">
-                      <h2 className="text-xl font-semibold capitalize">
-                        {item.name}
-                      </h2>
-                    </div>
-
-                    <Link href={`/charity-details/${item._id}`}>
-                      <button
-                        type="button"
-                        className="py-1 px-2 bg-yellow-400 hover:bg-yellow-500 rounded-md text-black text-sm font-semibold"
-                      >
-                        View
-                      </button>
-                    </Link>
-                  </div>
+              {filteredCharities.length === 0 ? (
+                <div className="text-red-500 text-center py-4 text-2xl font-semibold">
+                  No Charities Found!
                 </div>
-              ))}
+              ) : (
+                filteredCharities.map((item, index) => (
+                  <div
+                    className="px-3 py-7 rounded-md shadow-2xl flex justify-start space-x-3"
+                    key={index}
+                  >
+                    <div className="flex items-center">
+                      <div className="size-[80px] shadow-2xl p-5 rounded-full flex items-center justify-center">
+                        <img
+                          className="w-full h-full rounded-md"
+                          src={`/charity/${item.imgName || item.img_name}`} // Ensure image path
+                          alt="charity-icon"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="mb-2">
+                        <h2 className="text-xl font-semibold capitalize">
+                          {item.name}
+                        </h2>
+                      </div>
+
+                      <Link href={`/charity-details/${item.id}`}>
+                        <button
+                          type="button"
+                          className="py-1 px-2 bg-yellow-400 hover:bg-yellow-500 rounded-md text-black text-sm font-semibold"
+                        >
+                          View
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           )}
         </section>
