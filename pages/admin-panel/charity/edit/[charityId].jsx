@@ -3,22 +3,25 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { AdminLayout } from "../../layout";
 import Head from "next/head";
-import charity from "@/pages/charity-listings";
 import axios from "axios";
+import { useToast } from "@/components/ui/use-toast"; // Import the useToast hook
 
 const Edit = () => {
   const router = useRouter();
   const params = useParams();
   const id = params?.charityId;
-  const [Charity, setCharity] = useState({});
-  const [FormData, setFormData] = useState({
+  const [charity, setCharity] = useState({});
+  const [formData, setFormData] = useState({
     institudeName: "",
     address: "",
     about: "",
     contact1: "",
     contact2: "",
     email: "",
+    image: null,
   });
+
+  const { toast } = useToast(); // Use the useToast hook
 
   const getCharityItem = async (id) => {
     try {
@@ -34,9 +37,10 @@ const Edit = () => {
         contact1: res.data.validCharity.contact1,
         contact2: res.data.validCharity.contact2,
         email: res.data.validCharity.email,
+        image: null,
       });
     } catch (error) {
-      alert("Charity Not Found!");
+      showToast("error", "Charity Not Found!");
     }
   };
 
@@ -53,34 +57,55 @@ const Edit = () => {
   }, []);
 
   const handleChange = (e) => {
-    if (e.target.name === "image") {
-      setFormData({
-        id: Charity._id,
-        ...FormData,
-        image: e.target.files?.[0],
-      });
+    const { name, value, files } = e.target;
+    if (name === "image") {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: files[0],
+      }));
     } else {
-      setFormData({
-        id: Charity._id,
-        ...FormData,
-        [e.target.name]: e.target.value,
-      });
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formDataToSend = new FormData();
+    formDataToSend.append("id", id);
+    formDataToSend.append("institudeName", formData.institudeName);
+    formDataToSend.append("address", formData.address);
+    formDataToSend.append("about", formData.about);
+    formDataToSend.append("contact1", formData.contact1);
+    formDataToSend.append("contact2", formData.contact2);
+    formDataToSend.append("email", formData.email);
+    if (formData.image) {
+      formDataToSend.append("image", formData.image);
+    }
 
     try {
-      const res = await axios.post("/api/updateCharity", FormData, {
+      const res = await axios.post("/api/updateCharity", formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      router.push("/admin-panel/charity");
+
+      if (res.status === 200) {
+        showToast("success", "Charity updated successfully!");
+        router.push("/admin-panel/charity");
+      }
     } catch (error) {
-      alert("Charity Not Found!");
+      showToast("error", "Failed to update charity.");
     }
+  };
+
+  const showToast = (type, message) => {
+    toast({
+      description: message,
+      variant: type === "error" ? "destructive" : "default",
+    });
   };
 
   return (
@@ -90,7 +115,7 @@ const Edit = () => {
       </Head>
 
       <div className="p-5">
-        <h1 className="text-2xl font-semibold">Edit Charity Institude:</h1>
+        <h1 className="text-2xl font-semibold">Edit Charity Institute:</h1>
 
         <div className="mt-4">
           <form method="post" onSubmit={handleSubmit}>
@@ -109,11 +134,11 @@ const Edit = () => {
 
               <div>
                 <label htmlFor="institudeName">
-                  Institude Name:<span className="text-red-500">*</span>
+                  Institute Name:<span className="text-red-500">*</span>
                 </label>
                 <input
                   onChange={handleChange}
-                  value={FormData.institudeName}
+                  value={formData.institudeName}
                   type="text"
                   name="institudeName"
                   id="institudeName"
@@ -129,7 +154,7 @@ const Edit = () => {
                 </label>
                 <input
                   onChange={handleChange}
-                  value={FormData.address}
+                  value={formData.address}
                   type="text"
                   name="address"
                   id="address"
@@ -145,11 +170,11 @@ const Edit = () => {
                 </label>
                 <textarea
                   onChange={handleChange}
-                  value={FormData.about}
+                  value={formData.about}
                   name="about"
                   id="about"
                   className="p-2 rounded-md border border-black w-full block"
-                  placeholder="Enter Name"
+                  placeholder="Enter Description"
                   required
                 ></textarea>
               </div>
@@ -160,7 +185,7 @@ const Edit = () => {
                 </label>
                 <input
                   onChange={handleChange}
-                  value={FormData.email}
+                  value={formData.email}
                   type="email"
                   name="email"
                   id="email"
@@ -177,7 +202,7 @@ const Edit = () => {
                   </label>
                   <input
                     onChange={handleChange}
-                    value={FormData.contact1}
+                    value={formData.contact1}
                     type="number"
                     min={1}
                     name="contact1"
@@ -194,7 +219,7 @@ const Edit = () => {
                   </label>
                   <input
                     onChange={handleChange}
-                    value={FormData.contact2}
+                    value={formData.contact2}
                     type="number"
                     min={1}
                     name="contact2"

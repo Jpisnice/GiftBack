@@ -6,6 +6,33 @@ import { useQuery } from "react-query";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import {
+  Card,
+  CardFooter,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+const getImageSrc = (img, type = "charity") => {
+  // Check if the URL is absolute
+  if (/^(http|https):\/\//.test(img)) {
+    return img;
+  }
+
+  // Determine the base directory based on the type
+  let baseDir = "";
+  if (type === "charity") {
+    baseDir = "/charity/";
+  } else if (type === "product") {
+    baseDir = "/product/";
+  }
+
+  // Handle relative paths for different types of images
+  return `${baseDir}${img}`;
+};
 
 const CharityDetails = () => {
   const router = useRouter();
@@ -13,7 +40,7 @@ const CharityDetails = () => {
 
   const fetchCharityDetails = async (charityId) => {
     try {
-      const res = await axios.post('/api/getOneCharity', { charityId });
+      const res = await axios.post("/api/getOneCharity", { charityId });
       return res.data;
     } catch (error) {
       console.error("Error fetching charity details:", error);
@@ -29,21 +56,10 @@ const CharityDetails = () => {
     }
   );
 
-  const getImageSrc = (img) => {
-    // Check if the URL is absolute
-    if (/^(http|https):\/\//.test(img)) {
-      return img;
-    }
-    // Handle relative paths for wishlist items
-    return `/product/${img}`;
-  };
-
   if (isLoading) {
     return (
       <WebLayout>
-        <div className="p-3 text-center font-semibold text-2xl">
-          Loading...
-        </div>
+        <div className="p-3 text-center font-semibold text-2xl">Loading...</div>
       </WebLayout>
     );
   }
@@ -71,7 +87,7 @@ const CharityDetails = () => {
               <div className="size-[150px] rounded-md bg-black">
                 <img
                   className="w-full h-full rounded-md"
-                  src={`/charity/${data?.validCharity.img_name}`} // Use the public/charity/ directory
+                  src={getImageSrc(data?.validCharity.img_name)} // Use the public/charity/ directory
                   alt="charity-pic"
                 />
               </div>
@@ -97,12 +113,7 @@ const CharityDetails = () => {
                   target="blank"
                   href={`mailto:${data?.validCharity.email}`}
                 >
-                  <button
-                    type="button"
-                    className="text-sm font-semibold border border-black rounded-md py-1 px-4"
-                  >
-                    Contact
-                  </button>
+                  <Button variant="outline">Contact</Button>
                 </Link>
               </div>
             </div>
@@ -125,39 +136,29 @@ const CharityDetails = () => {
                 No Products Found!
               </div>
             ) : (
-              <div className="grid lg:grid-cols-4 md:grid-cols-4 grid-cols-1 gap-2 mt-2">
+              <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mt-2">
                 {data?.productList.map((item, index) => (
-                  <div
-                    className="p-3 rounded-md shadow-2xl space-x-3"
-                    key={index}
-                  >
-                    <div className="w-full bg-black rounded-md h-[200px] overflow-hidden">
+                  <Card key={index} className="w-full max-w-sm aspect-square">
+                    <CardHeader className="relative overflow-hidden flex items-center justify-center h-[70%] rounded-t-md">
                       <img
-                        className="w-full rounded-md"
-                        src={getImageSrc(item.img_name)} // Use the getImageSrc function for wishlist items
+                        className="object-cover w-full h-full absolute top-0 left-0 rounded-t-md"
+                        src={getImageSrc(item.img_name, "product")} // Use the public/product/ directory
                         alt="product-pic"
                       />
-                    </div>
+                    </CardHeader>
 
-                    <div className="flex justify-between mt-3">
-                      <div>
-                        <p className="text-xl font-semibold capitalize">
-                          {item.name}
-                        </p>
-                      </div>
-
-                      <div>
-                        <Link href={`/product-details/${item.id}`}>
-                          <button
-                            type="button"
-                            className="py-1 px-2 bg-yellow-400 hover:bg-yellow-500 rounded-md text-black text-sm font-semibold"
-                          >
-                            Proceed To Gift
-                          </button>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
+                    <CardContent className="flex flex-col justify-center items-center p-3 h-[30%]">
+                      <CardTitle className="text-xl font-semibold capitalize text-center">
+                        {item.name.length > 20
+                          ? `${item.name.slice(0, 20)}...`
+                          : item.name}
+                      </CardTitle>
+                      <Link href={`/product-details/${item.id}`}>
+                        <Button className="mt-2" variant="yellow">Proceed To Gift</Button>
+                      </Link>
+                    </CardContent>
+                    <CardFooter></CardFooter>
+                  </Card>
                 ))}
               </div>
             )}

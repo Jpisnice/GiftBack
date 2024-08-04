@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { useQuery } from "react-query";
+import { Button } from "@/components/ui/button"; // Import Shadcn button component
 
 const getImageSrc = (img) => {
   // Check if the URL is absolute
@@ -44,7 +45,9 @@ const ProductDetails = () => {
             Loading...
           </div>
         ) : (
-          <section className="p-7 h-full min-h-screen py-10 px-3">
+          <section className="p-7 h-full min-h-screen py-10 px-5">
+            {" "}
+            {/* Increased left and right padding */}
             <div className="mb-5">
               <div className="size-[250px] lg:hidden md:hidden block mx-auto rounded-md bg-black">
                 <img
@@ -54,8 +57,9 @@ const ProductDetails = () => {
                 />
               </div>
             </div>
-
-            <div className="flex justify-start space-x-3">
+            <div className="flex justify-start space-x-5">
+              {" "}
+              {/* Increased space between elements */}
               <div>
                 <div className="lg:size-[500px] md:size-[300px] lg:block md:block hidden mx-auto rounded-md bg-black">
                   <img
@@ -65,7 +69,6 @@ const ProductDetails = () => {
                   />
                 </div>
               </div>
-
               <div>
                 <div>
                   <h1 className="text-4xl font-bold capitalize">
@@ -86,12 +89,9 @@ const ProductDetails = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <button
-                        type="button"
-                        className="text-sm font-semibold bg-yellow-400 hover:bg-yellow-500 rounded-md py-1 px-4"
-                      >
+                      <Button variant="yellow" className="mt-2">
                         Proceed To Gift
-                      </button>
+                      </Button>
                     </a>
                   </div>
                 </div>
