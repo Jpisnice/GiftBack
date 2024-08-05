@@ -6,6 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { PencilIcon, TrashIcon } from "@/components/Icons"; // Import custom icons
+import { Button, buttonVariants } from "@/components/ui/button"; // Import Shadcn button
+import { Switch } from "@/components/ui/switch"; // Import Shadcn switch
 
 function Wishlist() {
   const router = useRouter();
@@ -25,7 +28,7 @@ function Wishlist() {
       toast({
         title: "Error",
         description: "Server Downtime, Please Try Again Later!",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -42,23 +45,24 @@ function Wishlist() {
     }
   }, [id]);
 
-  const handleActivity = async (ItemId) => {
+  const handleActivity = async (ItemId, isActive) => {
     try {
       await axios.post("/api/changeItemActivity", {
         itemId: ItemId,
+        isActive: !isActive,
       });
 
       getItems(id);
       toast({
         title: "Success",
         description: "Activity changed successfully!",
-        variant: "default"
+        variant: "default",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to change Activity!",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -73,23 +77,21 @@ function Wishlist() {
       toast({
         title: "Success",
         description: "Item deleted successfully!",
-        variant: "default"
+        variant: "default",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to delete Item!",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   const getImageSrc = (img) => {
-    // Check if the URL is absolute
     if (/^(http|https):\/\//.test(img)) {
       return img;
     }
-    // Handle relative paths
     return `/product/${img}`;
   };
 
@@ -107,21 +109,21 @@ function Wishlist() {
 
           <div className="space-x-2">
             <Link href={`/admin-panel/wishlist/createAPI/${id}`}>
-              <button
-                type="button"
-                className="rounded-md py-1 px-2 bg-green-400 hover:bg-green-500 text-black"
+              <Button
+                variant="outline"
+                className="bg-green-400 hover:bg-green-500 text-black"
               >
                 Add Through API
-              </button>
+              </Button>
             </Link>
 
             <Link href={`/admin-panel/wishlist/create/${id}`}>
-              <button
-                type="button"
-                className="rounded-md py-1 px-2 bg-green-400 hover:bg-green-500 text-black"
+              <Button
+                variant="outline"
+                className="bg-green-400 hover:bg-green-500 text-black"
               >
                 Add
-              </button>
+              </Button>
             </Link>
           </div>
         </div>
@@ -142,49 +144,51 @@ function Wishlist() {
                   </td>
                   <td className="py-5">
                     <div>
-                      <h2 className="text-2xl font-semibold capitalize">
+                      <h2 className="text-lg font-semibold capitalize">
                         {item.name}
                       </h2>
                     </div>
                   </td>
                   <td className="py-5">
                     <div>
-                      <h2 className="text-2xl font-semibold">£ {item.price}</h2>
+                      <h2 className="text-lg font-semibold">£ {item.price}</h2>
                     </div>
                   </td>
                   <td className="py-5">
                     <div className="flex justify-center space-x-3 items-center">
                       <div>
-                        <Link href={`/admin-panel/wishlist/edit/${item._id}`}>
-                          <button type="button">
-                            <img src="/icons/editIcon.png" alt="Edit Icon" />
-                          </button>
+                        <Link href={`/admin-panel/wishlist/edit/${item.id}`}>
+                          <Button variant="ghost">
+                            <TrashIcon />
+                          </Button>
                         </Link>
                       </div>
 
                       <div>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(item._id)}
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDelete(item.id)}
                         >
-                          <img src="/icons/deleteIcon.png" alt="Delete Icon" />
-                        </button>
+                          <PencilIcon />
+                        </Button>
                       </div>
                     </div>
                   </td>
                   <td className="py-5">
                     <div>
-                      <button
-                        onClick={() => handleActivity(item._id)}
-                        type="button"
-                        className={`bg-${
-                          item.isActive ? "green-400" : "yellow-400"
-                        } hover:bg-${
-                          item.isActive ? "green-500" : "yellow-500"
-                        } py-1 px-2 rounded-md text-black`}
+                      <Switch
+                        checked={item.is_active}
+                        onCheckedChange={() =>
+                          handleActivity(item.id, item.is_active)
+                        }
+                        className={`${
+                          item.is_active
+                            ? "bg-green-400 hover:bg-green-500"
+                            : "bg-yellow-400 hover:bg-yellow-500"
+                        }`}
                       >
-                        {item.isActive ? "Active" : "In-Active"}
-                      </button>
+                        {item.is_active ? "Active" : "In-Active"}
+                      </Switch>
                     </div>
                   </td>
                 </tr>
