@@ -1,4 +1,3 @@
-// pages/index.js
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Link from "next/link";
@@ -28,7 +27,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-100">
       <Head>
         <title>Gift Right | Home</title>
       </Head>
@@ -37,18 +36,18 @@ export default function Home() {
         <RotatingBanner />
 
         <section className="p-5">
-          <h2 className="text-4xl font-semibold">Highlighted Charities</h2>
-          <div className="mt-3 grid lg:grid-cols-3 md:grid-cols-3 grid-cols-1 gap-3">
+          <h2 className="text-3xl font-bold mb-5">Highlighted Charities</h2>
+          <div className="mt-3 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
             {Charity.length === 0 && (
-              <p className="text-center">No highlighted charities available.</p>
+              <p className="text-center text-gray-500">No highlighted charities available.</p>
             )}
             {Charity.map((item, index) => (
-              <div key={index}>
-                <Link href={`/charity-details/${item.id}`}>
-                  <div className="rounded-xl shadow-2xl bg-white text-center p-3">
-                    <div className="p-7 size-[150px] rounded-full shadow-2xl mx-auto flex justify-center items-center mb-5">
+              <Link href={`/charity-details/${item.id}`} key={index}>
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                  <div className="p-4">
+                    <div className="w-full h-32 sm:h-48 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center mx-auto mb-4">
                       <img
-                        className="w-full mx-auto"
+                        className="w-full h-full object-cover"
                         src={
                           item.imgName
                             ? `/charity/${item.imgName}`
@@ -60,13 +59,11 @@ export default function Home() {
                       />
                     </div>
 
-                    <h2 className="text-2xl font-semibold capitalize">
-                      {item.name}
-                    </h2>
-                    <p className="mt-3 line-clamp-3 capitalize">{item.about}</p>
+                    <h2 className="text-xl font-semibold mb-2 truncate">{item.name}</h2>
+                    <p className="text-gray-600 text-sm line-clamp-2">{item.about}</p>
                   </div>
-                </Link>
-              </div>
+                </div>
+              </Link>
             ))}
           </div>
         </section>

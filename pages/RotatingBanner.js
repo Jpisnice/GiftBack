@@ -2,10 +2,17 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const RotatingBanner = () => {
-  const [backgroundImage, setBackgroundImage] = useState("/bannerimage1.png");
+  const [backgroundImage, setBackgroundImage] = useState("/bannerimage1.jpg");
 
   useEffect(() => {
-    const images = ["/bannerimage1.png","/bannerimage2.png","/bannerimage3.png","/bannerimage4.png","/bannerimage5.png","/bannerimage6.png"];
+    const images = [
+      "/bannerimage1.jpg",
+      "/bannerimage2.jpg",
+      "/bannerimage3.jpg",
+      "/bannerimage4.jpg",
+      "/bannerimage5.jpg",
+      "/bannerimage6.jpg"
+    ];
     let currentIndex = 0;
 
     const intervalId = setInterval(() => {
@@ -17,25 +24,19 @@ const RotatingBanner = () => {
   }, []);
 
   return (
-    <section>
+    <section className="relative w-full h-[55vw] overflow-hidden md: h-[30vw]">
       <div
-        className="w-full h-[650px] flex justify-start items-center p-5"
-        style={{
-          height:"40vw",
-          maxHeight: "500px",
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "fill",
-          transition: "background-image 1s ease-in-out",
-        }}
-      >
-        <div className="pl-8">
-          <p className="capitalize text-6xl font-semibold text-black mb-3 pb-5">
+        className="absolute inset-0 w-full h-full bg-cover bg-center transition-background-image duration-1000 ease-in-out"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      ></div>
+      <div className="relative z-10 flex justify-start items-center h-full p-3 sm:p-5 bg-black bg-opacity-20">
+        <div className="pl-2 sm:pl-4">
+          <p className="text-xl xs:text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-5 lg:mb-8">
             GiftRight
           </p>
           <Link
             href="/charity-listings"
-            className="bg-yellow-400 text-black py-3 px-6 rounded-md text-lg font-semibold"
+            className="bg-yellow-400 text-black py-1 px-2 xs:py-2 xs:px-4 sm:py-3 sm:px-6 rounded-md text-xs xs:text-sm sm:text-lg font-semibold hover:bg-yellow-500 transition-colors duration-200"
           >
             Explore Charities
           </Link>
